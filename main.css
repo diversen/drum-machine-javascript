@@ -1,0 +1,22 @@
+
+    .cell {
+        height: 10px;
+        min-width: 10px;
+        border: black;
+        background: #fff;
+        border-style: solid;
+        border-width: 1px;
+    }
+
+    .enabled {
+        background: grey;
+    }
+
+    .current {
+        background: purple;
+
+    }
+
+    #tracker-parent {
+        overflow-x: visible;
+    }

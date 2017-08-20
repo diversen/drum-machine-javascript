@@ -1,0 +1,54 @@
+<body>
+    <link rel="stylesheet" type="text/css" href="main.css" />
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://cdn.rawgit.com/diversen/select-element/master/dist/select-element.js"></script>
+    <script src="https://cdn.rawgit.com/diversen/get-set-form-values/master/dist/get-set-form-values.js"></script>
+    <script src="https://cdn.rawgit.com/diversen/load-sample-set/master/dist/load-sample-set.js"></script>
+    <script src="https://cdn.rawgit.com/sebpiq/WAAClock/c8d11dff/dist/WAAClock-latest.js"></script>
+    <script src="https://cdn.rawgit.com/diversen/get-html-rows-cells/master/dist/get-html-rows-cells.js"></script>
+    <script src ="https://cdn.rawgit.com/diversen/adsr-gain-node/master/dist/adsr-gain-node.js"></script>
+
+    <div id="tracker-parent">
+        <table id="tracker"></table>
+    </div>
+    <div id="controls">
+        <button id="play">Play</button>
+        <button id="pause">Pause</button>
+        <button id="stop">Stop</button><br />
+        
+
+        <form id="trackerControls">
+            <select name="sampleSet" class="base" id="sampleSet">
+                <option value="https://raw.githubusercontent.com/oramics/sampled/master/DM/LM-2/sampled.instrument.json">LM-2</option>
+                <option value="https://raw.githubusercontent.com/oramics/sampled/master/DM/TR-909/Detroit/sampled.instrument.json">TR-909 Detroit</option>
+                <option value="https://raw.githubusercontent.com/oramics/sampled/master/DM/TR-909/SP/sampled.instrument.json">TR-909 SP</option>
+                <option value="https://raw.githubusercontent.com/oramics/sampled/master/DM/CR-78/sampled.instrument.json">CR-78</option>
+                <option value="https://raw.githubusercontent.com/oramics/sampled/master/DM/MRK-2/sampled.instrument.json">MRK-2</option>
+                <option value="https://raw.githubusercontent.com/oramics/sampled/master/DM/TR-505/sampled.instrument.json">TR-505</option>
+            </select>
+            <br />
+                
+            <input class="base" id="bpm" name="bpm" type ="range" max ="1000" min="20" step ="1" value="460"> BPM<br>
+            <input class="base" name="initGain" id="initGain" type ="range" max ="1" min="0" step ="0.1" value="0.5"> Init gain<br>
+            <input class="base" name="maxGain" id="maxGain" type ="range" max ="1" min="0" step ="0.1" value="0.9"> Max gain<br>
+            <input class="base" name="attackTime" id="attackTime" type ="range" max ="1" min="0" step ="0.01" value="0.08"> Attack time<br>
+            <input class="base" name="sustainTime" id ="sustainTime" type ="range" max ="2" min="0" step ="0.1" value="0.1"> Sustain time<br>
+            <input class="base" name="releaseTime" id ="releaseTime" type ="range" max ="5" min="0" step ="0.1" value="2"> Release time<br />
+            <input class="base" name="detune" id ="detune" type ="range" max ="1200" min="-1200" step ="10" value="0"> Detune / Tune<br />
+            
+            <hr />
+            <input class="base" name="delayEnabled" type="checkbox" id="delayEnabled" value="delay"> Enabled delay<br />
+            <input class="base" name="delay" id ="delay" type ="range" max ="1" min="0" step ="0.01" value="0.01"> Delay<br>
+            <input class="base" name="filter" id ="filter" type ="range" max ="10000" min="20" step ="0.1" value="1000"> Filter<br>
+        </form>
+        <hr />
+        <input type="text" id="filename">
+        <button id="save">Save as </button>
+        
+        <span id="load-storage"></span>
+        <button id="delete">Delete selected</button>
+    </div>
+    <script src="storage.js"></script>
+    <script src="main.js"></script>
+    
+</body>
