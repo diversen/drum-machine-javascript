@@ -21,8 +21,8 @@ Install deps:
     npm install
 
 Build: 
-
-    watchify main.js -o bundle.js --debug -t [ babelify --presets [ es2015 ] ]
+    
+    watchify src/main.js -o bundle.js --debug -t [ babelify --presets [ es2015 ] ]
 
 ## Licence
 
