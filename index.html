@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
     <title>javascript drum machine"></title>
@@ -7,18 +8,10 @@
     
     <link rel="stylesheet" type="text/css" href="main.css" />
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-    <script src="https://cdn.rawgit.com/diversen/select-element/master/dist/select-element.js"></script>
-    <script src="https://cdn.rawgit.com/diversen/get-set-form-values/master/dist/get-set-form-values.js"></script>
-    <script src="https://cdn.rawgit.com/diversen/load-sample-set/master/dist/load-sample-set.js"></script>
-    <script src="https://cdn.rawgit.com/sebpiq/WAAClock/c8d11dff/dist/WAAClock-latest.js"></script>
-    <script src="https://cdn.rawgit.com/diversen/get-html-rows-cells/master/dist/get-html-rows-cells.js"></script>
-    <script src ="https://cdn.rawgit.com/diversen/adsr-gain-node/master/dist/adsr-gain-node.js"></script>
-    
-    <!--<script src='soundbank-reverb/dist/soundbank-reverb.js'></script>-->
 
-    <span id="tracker-parent">
+    <div id="tracker-parent">
         <table id="tracker"></table>
-    </span>
+    </div>
     <div id="controls">
         <button id="play">Play</button>
         <button id="pause">Pause</button>
@@ -33,7 +26,7 @@
                 <option value="https://raw.githubusercontent.com/oramics/sampled/master/DM/MRK-2/sampled.instrument.json">MRK-2</option>
                 <option value="https://raw.githubusercontent.com/oramics/sampled/master/DM/TR-505/sampled.instrument.json">TR-505</option>
                 <option value="https://raw.githubusercontent.com/oramics/sampled/master/DM/LM-2/sampled.instrument.json">LM-2</option>
-                <option value="https://raw.githubusercontent.com/oramics/sampled/master/DRUMS/pearl-master-studio/sampled.instrument.json">Pearl Master Studio</
+                <option value="https://raw.githubusercontent.com/oramics/sampled/master/DRUMS/pearl-master-studio/sampled.instrument.json">Pearl Master Studio</option>
             </select>
             <br />
                 
@@ -58,6 +51,7 @@
         <button id="delete">Delete selected</button>
     </div>
     <script src="storage.js"></script>
-    <script src="main.js"></script>
+    <script src="bundle.js"></script>
     
 </body>
+</html>
