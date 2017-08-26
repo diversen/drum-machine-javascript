@@ -191,8 +191,13 @@ function scheduleAudioBeat(beat, triggerTime) {
 
         instrument.detune.value = audioOptions.options.detune;
         // instrument -> gain
+        
         instrument.connect(gainNode);
-
+        
+        //let reverb = getReverb();
+        //gainNode.connect(reverb);
+        //reverb.connect(ctx.destination);
+        
         gainNode.connect(ctx.destination);
 
         instrument.start(triggerTime);
@@ -203,6 +208,21 @@ function scheduleAudioBeat(beat, triggerTime) {
     } else {
         connectClean(instrument);
     }
+    
+    function getReverb () {
+                
+        let reverb = soundbankReverb(ctx)
+        // reverb.connect(ctx.destination)
+
+        reverb.time = 1 //seconds
+        reverb.wet.value = 0.8
+        reverb.dry.value = 1
+
+        reverb.filterType = 'lowpass'
+        reverb.cutoff.value = 4000 //Hz
+        return reverb;
+    }
+    
 }
 
 var dataUrl = "https://raw.githubusercontent.com/oramics/sampled/master/DM/CR-78/sampled.instrument.json";
