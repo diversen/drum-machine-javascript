@@ -1,14 +1,12 @@
-require('es6-object-assign').polyfill();
-
+// require("babel-polyfill"); 
+const loadSampleSet = require('load-sample-set');
+const selectElement = require('select-element');
+const getSetFormValues = require('get-set-form-values');
 const adsrGainNode = require('adsr-gain-node');
 const getHtmlRowsCells = require('get-html-rows-cells');
-const WAAClock = require('waaclock');
-const loadSampleSet = require('load-sample-set');
 const getControlValues = require('./get-tracker-controls');
 const getAudioOptions = require('./get-set-controls');
 const scheduleMeasure = require('./schedule-measure');
-const selectElement = require('select-element');
-const getSetFormValues = require('get-set-form-values');
 const audioOptions = new getAudioOptions();
 const ctx = new AudioContext();
 

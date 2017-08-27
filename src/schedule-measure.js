@@ -1,4 +1,3 @@
-const adsrGainNode = require('adsr-gain-node');
 const WAAClock = require('waaclock');
 const getAudioOptions = require('./get-set-controls');
 const audioOptions = new getAudioOptions();
@@ -40,6 +39,7 @@ function scheduleMeasure(ctx, scheduleAudioBeat) {
         });
         return values;
     };
+    
 
     this.schedule = function () {
 
