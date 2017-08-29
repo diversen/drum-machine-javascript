@@ -2,10 +2,9 @@ const WAAClock = require('waaclock');
 const getAudioOptions = require('./get-set-controls');
 const audioOptions = new getAudioOptions();
 
-var measureLength = 16;
-
 function scheduleMeasure(ctx, scheduleAudioBeat) {
     
+    this.measureLength = 16;
     this.scheduleAudioBeat = scheduleAudioBeat;
     this.scheduleForward = 0.1;
     this.current = 0;
@@ -16,7 +15,7 @@ function scheduleMeasure(ctx, scheduleAudioBeat) {
 
     this.next = function () {
         this.current++;
-        if (this.current >= measureLength) {
+        if (this.current >= this.measureLength) {
             this.current = 0;
         }
     };

@@ -1,22 +1,38 @@
+@import url(https://fonts.googleapis.com/css?family=Merriweather:400,700);
 
-    .cell {
-        height: 10px;
-        min-width: 10px;
-        border: black;
-        background: #fff;
-        border-style: solid;
-        border-width: 1px;
-    }
+.merriweather      { 
+    font-family: 'Merriweather'; 
+}
 
-    .enabled {
-        background: grey;
-    }
+#controls {
+    font-family: 'Merriweather';
+    font-size: 10px;
+}
+a {
+    color: hotpink;
+}
 
-    .current {
-        background: purple;
+.cell {
+    height: 15px;
+    min-width: 15px;
+    border: black;
+    border-color: black;
+    background: #fff;
+    border-style: solid;
+    border-width: 1px;
+    font-size: 60%;
+    /*background-color: pink;*/
+}
 
-    }
+.enabled {
+    background: black;
+}
 
-    #tracker-parent {
-        overflow-x: visible;
-    }
+.current {
+    background: purple;
+
+}
+
+#tracker-parent {
+    overflow-x: visible;
+}

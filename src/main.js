@@ -3,7 +3,7 @@ const loadSampleSet = require('load-sample-set');
 const selectElement = require('select-element');
 const getSetFormValues = require('get-set-form-values');
 const adsrGainNode = require('adsr-gain-node');
-const getHtmlRowsCells = require('get-html-rows-cells');
+const trackerTable = require('./tracker-table');
 const getControlValues = require('./get-tracker-controls');
 const getAudioOptions = require('./get-set-controls');
 const scheduleMeasure = require('./schedule-measure');
@@ -47,9 +47,16 @@ window.onload = function () {
 var instrumentData = {};
 function setupTrackerHtml(data) {
     instrumentData = data;
-    document.getElementById("tracker").innerHTML = '';
-    var str = getHtmlRowsCells(data.filename.length, measureLength, 'tr', 'td');
-    var t = document.getElementById('tracker');
+    document.getElementById("tracker-parent").innerHTML = '';
+    
+    let htmlTable = new trackerTable();
+    console.log(data);
+    
+    
+    htmlTable.setRows(data.filename.length, measureLength);
+    var str = htmlTable.getTable();
+    
+    var t = document.getElementById('tracker-parent');
     t.insertAdjacentHTML('afterbegin', str);
     
 }
@@ -130,6 +137,7 @@ function scheduleAudioBeat(beat, triggerTime) {
 }
 
 var schedule = new scheduleMeasure(ctx, scheduleAudioBeat);
+schedule.measureLength = measureLength;
 
 function setupBaseEvents () {
     document.getElementById('play').addEventListener('click', function (e) {
@@ -144,6 +152,7 @@ function setupBaseEvents () {
     document.getElementById('stop').addEventListener('click', function (e) {
         schedule.stop();
         schedule = new scheduleMeasure(ctx, scheduleAudioBeat);
+        schedule.measureLength = measureLength;
     });
     
     document.getElementById('bpm').addEventListener('change', function (e) {
