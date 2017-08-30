@@ -1,8 +1,6 @@
 function trackerTable() {
     
     this.str = '';
-    
-    
     this.getTable = function () {
         return '<table id="tracker">' + this.str + '</table>';
     };
@@ -34,10 +32,6 @@ function trackerTable() {
         }
         return str;
     };
-    
-    
 }
-
-
 
 module.exports = trackerTable;
