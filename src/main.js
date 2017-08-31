@@ -4,15 +4,15 @@ const selectElement = require('select-element');
 const getSetFormValues = require('get-set-form-values');
 const adsrGainNode = require('adsr-gain-node');
 const trackerTable = require('./tracker-table');
-const getControlValues = require('./get-tracker-controls');
-const getAudioOptions = require('./get-set-controls');
 const scheduleMeasure = require('./schedule-measure');
+
+const getAudioOptions = require('./get-set-controls');
 const audioOptions = new getAudioOptions();
+
 const ctx = new AudioContext();
 const defaultTrack = require('./default-track');
 
 var measureLength = 16;
-var dataUrl = "https://raw.githubusercontent.com/oramics/sampled/master/DM/CR-78/sampled.instrument.json";
 var buffers;
 
 function initializeSampleSet(ctx, dataUrl, track) {
@@ -31,11 +31,12 @@ function initializeSampleSet(ctx, dataUrl, track) {
 
 
 window.onload = function () {
+
     let formValues = new getSetFormValues();
     let form = document.getElementById("trackerControls");
 
     formValues.set(form, defaultTrack.settings);
-    audioOptions.setOptions(defaultTrack.settings);
+    audioOptions.setTrackerControls(defaultTrack.settings);
     
     initializeSampleSet(ctx, defaultTrack.settings.sampleSet, defaultTrack.beat);
     setupBaseEvents();
@@ -50,15 +51,12 @@ function setupTrackerHtml(data) {
     document.getElementById("tracker-parent").innerHTML = '';
     
     let htmlTable = new trackerTable();
-    console.log(data);
-    
-    
+
     htmlTable.setRows(data.filename.length, measureLength);
     var str = htmlTable.getTable();
     
     var t = document.getElementById('tracker-parent');
     t.insertAdjacentHTML('afterbegin', str);
-    
 }
 
 function disconnectNode(node, options) {
@@ -82,7 +80,7 @@ function scheduleAudioBeat(beat, triggerTime) {
         delay.delayTime.value = audioOptions.options.delay;
 
         let gain = new adsrGainNode(ctx);
-        gain.setOptions(audioOptions.getOptions());
+        gain.setOptions(audioOptions.getTrackerControls());
         let feedbackGain = gain.getGainNode(triggerTime);
 
 
@@ -91,7 +89,7 @@ function scheduleAudioBeat(beat, triggerTime) {
 
         // delay -> feedback
         delay.connect(feedbackGain);
-        disconnectNode(delay, audioOptions.getOptions());
+        disconnectNode(delay, audioOptions.getTrackerControls());
 
         // feedback -> filter
         feedbackGain.connect(filter);
@@ -115,9 +113,10 @@ function scheduleAudioBeat(beat, triggerTime) {
     }
 
     function connectClean(instrument) {
+
         // Trigger tone
         let gain = new adsrGainNode(ctx);
-        gain.setOptions(audioOptions.getOptions());
+        gain.setOptions(audioOptions.getTrackerControls());
         let gainNode = gain.getGainNode(triggerTime);
 
         instrument.detune.value = audioOptions.options.detune;
@@ -156,7 +155,7 @@ function setupBaseEvents () {
     });
     
     document.getElementById('bpm').addEventListener('change', function (e) {
-        audioOptions.setOptions();
+        audioOptions.setTrackerControls();
         if (schedule.running) {
             schedule.stop();
             schedule.runSchedule(audioOptions.options.bpm);
@@ -165,7 +164,7 @@ function setupBaseEvents () {
     
     
     $('.base').on('change', function () {
-        audioOptions.setOptions();
+        audioOptions.setTrackerControls();
     });
 }
     
@@ -222,7 +221,7 @@ function tracksLocalStorage () {
         document.getElementById('save').addEventListener('click', (e) => {
             e.preventDefault();
 
-            let formData = getControlValues();
+            let formData = audioOptions.getTrackerControls();
             let filename = $('#filename').val();
             if (!filename) {
                 filename = 'untitled';
@@ -245,12 +244,11 @@ function tracksLocalStorage () {
 
             document.getElementById('filename').value = item;
             let track = JSON.parse(localStorage.getItem(item));
-            console.log(track)
             let formValues = new getSetFormValues();
             let form = document.getElementById("trackerControls");
 
             formValues.set(form, track.settings);
-            audioOptions.setOptions(track.settings);
+            audioOptions.setTrackerControls(track.settings);
             schedule.stop();
 
             initializeSampleSet(ctx, track.settings.sampleSet, track.beat);

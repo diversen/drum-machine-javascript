@@ -1,17 +1,37 @@
-const getControlValues = require('./get-tracker-controls');
+const getSetFormValues = require('get-set-form-values');
 
+function getSetControls() {
 
-function getAudioOptions() {
-    this.options = getControlValues();
-    this.getOptions = function () {
-        return getControlValues();
-    };
-    this.setOptions = function (values) {
+    this.getTrackerControls = function() {
+
+        let formValues = new getSetFormValues();
+        let form = document.getElementById("trackerControls");
+        let values = formValues.get(form);
+        
+        let ret = {};
+        for (let key in values) {
+            
+            if (key === 'delayEnabled') {
+                ret[key] = 'true';
+                continue;
+            }
+            
+            if (key === 'sampleSet') { 
+                ret[key] = values[key];
+                continue;
+            }
+            ret[key] = parseFloat(values[key]);
+        }
+        return ret;
+    }
+
+    this.setTrackerControls = function (values) {
         if (!values) {
-            values = getControlValues();
+            values = this.getTrackerControls();
         }
         this.options = values;
     };  
+
 }
 
-module.exports = getAudioOptions;
+module.exports = getSetControls;
