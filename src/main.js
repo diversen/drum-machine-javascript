@@ -12,9 +12,10 @@ const audioOptions = new getAudioOptions();
 const ctx = new AudioContext();
 const defaultTrack = require('./default-track');
 
-// var measureLength = 16;
 var buffers;
 var currentSampleData;
+var storage;
+var trackerDebug;
 
 function initializeSampleSet(ctx, dataUrl, track) {
     
@@ -22,16 +23,19 @@ function initializeSampleSet(ctx, dataUrl, track) {
         buffers = sampleBuffers;
         
         if (!track) {
-            track = schedule.getTrackerValues();
-        } 
+            track = storage.getTrack();
+        }
+
+        if (!track.settings.measureLength) {
+            track.settings.measureLength = 16;
+        }
 
         currentSampleData = sampleData;
-        setupTrackerHtml(sampleData, 16);    
-        schedule.loadTrackerValues(track)
+        setupTrackerHtml(sampleData, track.settings.measureLength);   
+        schedule.loadTrackerValues(track.beat)
         setupEvents();
     });
 }
-
 
 window.onload = function () {
 
@@ -41,10 +45,10 @@ window.onload = function () {
     formValues.set(form, defaultTrack.settings);
     audioOptions.setTrackerControls(defaultTrack.settings);
     
-    initializeSampleSet(ctx, defaultTrack.settings.sampleSet, defaultTrack.beat);
+    initializeSampleSet(ctx, defaultTrack.settings.sampleSet, defaultTrack);
     setupBaseEvents();
     
-    var storage = new tracksLocalStorage();
+    storage = new tracksLocalStorage();
     storage.setupStorage();
 };
 
@@ -166,8 +170,6 @@ function setupBaseEvents () {
 
     document.getElementById('measureLength').addEventListener('input',  (e) => {
 
-        //let measureLength = this.value;
-        // console.log(measureLength)
         $('#measureLength').bind('keypress keydown keyup', (e) =>{
             if(e.keyCode == 13) { 
 
@@ -186,11 +188,7 @@ function setupBaseEvents () {
                 setupEvents();
             }
         });
-
-        console.log('entered')
-
     });
-    
     
     $('.base').on('change', function () {
         audioOptions.setTrackerControls();
@@ -222,7 +220,7 @@ function tracksLocalStorage () {
 
     this.setLocalStorage = function(update) {
         var storage = {};
-        storage['Select'] = 'Load selected';
+        storage['Select'] = 'Select';
 
 
         for ( var i = 0, len = localStorage.length; i < len; ++i ) {
@@ -244,24 +242,46 @@ function tracksLocalStorage () {
         }
     };
 
+    this.getFilename = function () {
+        let filename = $('#filename').val();
+        if (!filename) {
+            filename = 'untitled';
+        }
+        return filename;
+    }
+
+    /**
+     * Get complete song
+     */
+    this.getTrack = function () {
+        let formData = audioOptions.getTrackerControls();
+        let beat = schedule.getTrackerValues();
+        let song = {"beat": beat, "settings": formData};
+        return song;
+    }
+
     this.setupStorage = function() {
 
         this.setLocalStorage();
         document.getElementById('save').addEventListener('click', (e) => {
             e.preventDefault();
 
-            let formData = audioOptions.getTrackerControls();
-            let filename = $('#filename').val();
-            if (!filename) {
-                filename = 'untitled';
-            }
+            let song = this.getTrack();
+            let json = JSON.stringify(song);
 
-            let beat = schedule.getTrackerValues();
-            let song = {"beat": beat, "settings": formData}
+            let filename = this.getFilename();
 
-            localStorage.setItem(filename, JSON.stringify(song));
+            localStorage.setItem(filename, json);
             this.setLocalStorage('update');
-            setTimeout(function() { alert('Track saved'); }, 1);
+
+            $("#beat-list").val(filename);
+            alert('Track saved'); 
+        });
+
+        $('#filename').bind('keypress keydown keyup', (e) =>{
+            if(e.keyCode == 13) { 
+                e.preventDefault(); 
+            }
         });
 
         document.getElementById('beat-list').addEventListener('change', (e) => {
@@ -279,8 +299,9 @@ function tracksLocalStorage () {
             formValues.set(form, track.settings);
             audioOptions.setTrackerControls(track.settings);
             schedule.stop();
+            schedule.measureLength = track.settings.measureLength;
 
-            initializeSampleSet(ctx, track.settings.sampleSet, track.beat);
+            initializeSampleSet(ctx, track.settings.sampleSet, track);
 
         });
 

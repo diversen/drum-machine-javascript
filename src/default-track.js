@@ -1372,6 +1372,7 @@ module.exports = {
     "detune": 1200,
     "delayEnabled": "true",
     "delay": 0.05,
-    "filter": 2599.6
+    "filter": 2599.6,
+    "measureLength": 16
   }
 };
