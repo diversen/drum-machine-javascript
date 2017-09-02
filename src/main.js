@@ -12,8 +12,9 @@ const audioOptions = new getAudioOptions();
 const ctx = new AudioContext();
 const defaultTrack = require('./default-track');
 
-var measureLength = 16;
+// var measureLength = 16;
 var buffers;
+var currentSampleData;
 
 function initializeSampleSet(ctx, dataUrl, track) {
     
@@ -23,7 +24,9 @@ function initializeSampleSet(ctx, dataUrl, track) {
         if (!track) {
             track = schedule.getTrackerValues();
         } 
-        setupTrackerHtml(sampleData);    
+
+        currentSampleData = sampleData;
+        setupTrackerHtml(sampleData, 16);    
         schedule.loadTrackerValues(track)
         setupEvents();
     });
@@ -46,7 +49,7 @@ window.onload = function () {
 };
 
 var instrumentData = {};
-function setupTrackerHtml(data) {
+function setupTrackerHtml(data, measureLength) {
     instrumentData = data;
     document.getElementById("tracker-parent").innerHTML = '';
     
@@ -136,7 +139,6 @@ function scheduleAudioBeat(beat, triggerTime) {
 }
 
 var schedule = new scheduleMeasure(ctx, scheduleAudioBeat);
-schedule.measureLength = measureLength;
 
 function setupBaseEvents () {
     document.getElementById('play').addEventListener('click', function (e) {
@@ -160,6 +162,33 @@ function setupBaseEvents () {
             schedule.stop();
             schedule.runSchedule(audioOptions.options.bpm);
         }
+    });
+
+    document.getElementById('measureLength').addEventListener('input',  (e) => {
+
+        //let measureLength = this.value;
+        // console.log(measureLength)
+        $('#measureLength').bind('keypress keydown keyup', (e) =>{
+            if(e.keyCode == 13) { 
+
+                e.preventDefault(); 
+
+                let value = document.getElementById('measureLength').value;
+                let length = parseInt(value);
+                
+                if (length < 1) return;
+                schedule.measureLength = length;
+        
+                let track = schedule.getTrackerValues();                
+                setupTrackerHtml(currentSampleData, length);
+                schedule.measureLength = length;
+                schedule.loadTrackerValues(track)
+                setupEvents();
+            }
+        });
+
+        console.log('entered')
+
     });
     
     
@@ -193,7 +222,7 @@ function tracksLocalStorage () {
 
     this.setLocalStorage = function(update) {
         var storage = {};
-        storage['Select'] = 'Select';
+        storage['Select'] = 'Load selected';
 
 
         for ( var i = 0, len = localStorage.length; i < len; ++i ) {

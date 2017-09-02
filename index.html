@@ -4,22 +4,21 @@
     <title>javascript drum machine"></title>
 <meta name="description" content="A simple javascript drum machine / drum sequencer built with HTML / CSS and Javascript."/>
 </head>
+<link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
 <body>
     
     
     <link rel="stylesheet" type="text/css" href="main.css" />
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 
-    <div id="tracker-parent">
-        
-    </div>
+    <div id="tracker-parent"></div>
     <div id="controls">
         <button id="play">Play</button>
         <button id="pause">Pause</button>
         <button id="stop">Stop</button><br />
         
 
-        <form id="trackerControls">
+        <form class="pure-form" id="trackerControls">
             <select name="sampleSet" class="base" id="sampleSet">
                 <option value="https://raw.githubusercontent.com/oramics/sampled/master/DM/CR-78/sampled.instrument.json">CR-78</option>
                 <option value="https://raw.githubusercontent.com/oramics/sampled/master/DM/TR-909/Detroit/sampled.instrument.json">TR-909 Detroit</option>
@@ -30,7 +29,8 @@
                 <option value="https://raw.githubusercontent.com/oramics/sampled/master/DRUMS/pearl-master-studio/sampled.instrument.json">Pearl Master Studio</option>
             </select>
             <br />
-                
+            <input class="base" id="measureLength" name="measureLength" style="width: 60px;" value="16">Measure length<br>
+            
             <input class="base" id="bpm" name="bpm" type ="range" max ="1000" min="20" step ="1" value="460"> BPM<br>
             <input class="base" name="initGain" id="initGain" type ="range" max ="1" min="0" step ="0.1" value="0.5"> Init gain<br>
             <input class="base" name="maxGain" id="maxGain" type ="range" max ="1" min="0" step ="0.1" value="0.9"> Max gain<br>
@@ -45,11 +45,13 @@
             <input class="base" name="filter" id ="filter" type ="range" max ="10000" min="20" step ="0.1" value="1000"> Filter<br>
         </form>
         <hr />
-        <input type="text" id="filename">
-        <button id="save">Save as </button>
+        <form class="pure-form">
+            <input type="text" id="filename">
+            <button id="save">Save as </button><br />
         
-        <span id="load-storage"></span>
-        <button id="delete">Delete selected</button>
+            <span id="load-storage"></span>
+            <button id="delete">Delete selected</button>
+        </form>
     </div>
     <script src="bundle.js"></script>
     
