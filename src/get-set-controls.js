@@ -7,12 +7,15 @@ function getSetControls() {
         let formValues = new getSetFormValues();
         let form = document.getElementById("trackerControls");
         let values = formValues.get(form);
-        
         let ret = {};
         for (let key in values) {
             
             if (key === 'delayEnabled') {
-                ret[key] = 'true';
+                ret[key] = 'delay';
+                continue;
+            }
+            if (key === 'gainEnabled') {
+                ret[key] = 'gain';
                 continue;
             }
             

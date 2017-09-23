@@ -5,23 +5,47 @@ const getSetFormValues = require('get-set-form-values');
 const adsrGainNode = require('adsr-gain-node');
 const trackerTable = require('./tracker-table');
 const scheduleMeasure = require('./schedule-measure');
+const audioDistortionNode = require('./audio-distortion-node');
+const sampleLoader = require('tiny-sample-loader');
+const FileSaver = require('file-saver');
 
-const getAudioOptions = require('./get-set-controls');
-const audioOptions = new getAudioOptions();
+const getSetControls = require('./get-set-controls');
+const getSetAudioOptions = new getSetControls();
 
 const ctx = new AudioContext();
-const defaultTrack = require('./default-track');
+const defaultTrack = require('./track-2');
+
+var remoteUrl = 'https://mdn.github.io/voice-change-o-matic/audio/concert-crowd.ogg'
+
+async function go() {
+    try {
+        const concertHallBuffer = await sampleLoader(remoteUrl, ctx);
+        // console.log(sample)
+        let convolver = ctx.createConvolver();
+        convolver.buffer = concertHallBuffer;
+        return convolver;
+
+        // console.log(sample)
+    } catch (e) {
+        console.error(e); // 💩
+    }
+}
 
 var buffers;
 var currentSampleData;
 var storage;
 var trackerDebug;
+var convolver;
+
 
 function initializeSampleSet(ctx, dataUrl, track) {
-    
-    loadSampleSet(ctx, dataUrl, function (sampleData, sampleBuffers) {
-        buffers = sampleBuffers;
-        
+
+    var sampleSetPromise = loadSampleSet(ctx, dataUrl);
+    sampleSetPromise.then(function (data) {
+
+        buffers = data.buffers;
+        sampleData = data.data;
+
         if (!track) {
             track = storage.getTrack();
         }
@@ -31,9 +55,12 @@ function initializeSampleSet(ctx, dataUrl, track) {
         }
 
         currentSampleData = sampleData;
-        setupTrackerHtml(sampleData, track.settings.measureLength);   
-        schedule.loadTrackerValues(track.beat)
+        setupTrackerHtml(sampleData, track.settings.measureLength);
+        schedule.loadTrackerValues(track.beat);
         setupEvents();
+    });
+    go().then(function (data) {
+        convolver = data;
     });
 }
 
@@ -43,11 +70,11 @@ window.onload = function () {
     let form = document.getElementById("trackerControls");
 
     formValues.set(form, defaultTrack.settings);
-    audioOptions.setTrackerControls(defaultTrack.settings);
-    
+    getSetAudioOptions.setTrackerControls(defaultTrack.settings);
+
     initializeSampleSet(ctx, defaultTrack.settings.sampleSet, defaultTrack);
     setupBaseEvents();
-    
+
     storage = new tracksLocalStorage();
     storage.setupStorage();
 };
@@ -56,47 +83,117 @@ var instrumentData = {};
 function setupTrackerHtml(data, measureLength) {
     instrumentData = data;
     document.getElementById("tracker-parent").innerHTML = '';
-    
+
     let htmlTable = new trackerTable();
 
     htmlTable.setRows(data.filename.length, measureLength);
     var str = htmlTable.getTable();
-    
+
     var t = document.getElementById('tracker-parent');
     t.insertAdjacentHTML('afterbegin', str);
 }
 
 function disconnectNode(node, options) {
     let totalLength =
-            options.attackTime + options.sustainTime + options.releaseTime;
-
+        options.attackTime + options.sustainTime + options.releaseTime;
     setTimeout(() => {
         node.disconnect();
     }, totalLength * 1000);
 }
 
+
+// compressor.connect(ctx.destination);
+
+let distortionNode = new audioDistortionNode(ctx);
+let distortion = distortionNode.getDistortionNode(100);
+
 function scheduleAudioBeat(beat, triggerTime) {
-    
+
     let instrumentName = instrumentData.filename[beat.rowId];
     let instrument = buffers[instrumentName].get();
+    let options = getSetAudioOptions.getTrackerControls();
 
-    function connectDelay(instrument) {
+    function play(source) {
 
-        // With sustain and feedback filter
-        let delay = ctx.createDelay();
-        delay.delayTime.value = audioOptions.options.delay;
+        
+        source.detune.value = options.detune;
 
+
+        // Gain
+        let node = routeGain(source)
+
+        // convolver.connect(gainNode);
+        
+
+        
+        
+        // Delay
+        node = routeDelay(node);
+
+        node = routeCompressor(node);
+
+        // delayNode.connect(compressor);
+        node.connect(ctx.destination);
+
+
+        source.start(triggerTime);
+
+    }
+
+
+    function routeCompressor (node) {
+        return node;
+        var compressor = ctx.createDynamicsCompressor();
+        compressor.threshold.value = -100; // -100 - 0
+        compressor.knee.value = 10; // 1 - 40
+        compressor.ratio.value = 12; // 1 - 20
+        compressor.attack.value = 1; // 0 - 1
+        compressor.release.value = 0; // 0 - 1
+
+        node.connect(compressor);
+        return compressor;
+    }
+
+    function routeGain (source) {
         let gain = new adsrGainNode(ctx);
-        gain.setOptions(audioOptions.getTrackerControls());
+        let options = getSetAudioOptions.getTrackerControls();
+        let gainNode; 
+
+        // Not enabled - default gain
+        if (!options.gainEnabled) {
+            gainNode = gain.getGainNode(triggerTime);
+            source.connect(gainNode);
+            return gainNode;
+        }
+
+        gain.setOptions(options);
+        gainNode = gain.getGainNode(triggerTime);
+        source.connect(gainNode);
+        return gainNode;
+
+    }
+
+    function routeDelay(node) {
+        if (!options.delayEnabled) {
+            return node;
+        }
+
+        // create delay node
+        let delay = ctx.createDelay();
+        delay.delayTime.value = options.delay;
+
+        // create adsr gain node
+        let gain = new adsrGainNode(ctx);
+        gain.setOptions(options);
         let feedbackGain = gain.getGainNode(triggerTime);
 
-
+        // create filter
         let filter = ctx.createBiquadFilter();
-        filter.frequency.value = audioOptions.options.filter;
+        filter.frequency.value = options.filter;
 
-        // delay -> feedback
+        // delay -> feedbackGain
         delay.connect(feedbackGain);
-        disconnectNode(delay, audioOptions.getTrackerControls());
+        disconnectNode(delay, options);
 
         // feedback -> filter
         feedbackGain.connect(filter);
@@ -104,84 +201,53 @@ function scheduleAudioBeat(beat, triggerTime) {
         // filter ->delay
         filter.connect(delay);
 
-        instrument.detune.value = audioOptions.options.detune;
+        node.connect(delay);
 
-        // delay -> instrument
-        instrument.connect(delay);
-
-        // Instrument ->
-        instrument.connect(ctx.destination);
-
-        // Delay ->
-        delay.connect(ctx.destination);
-
-        instrument.start(triggerTime)
-        
+        return delay;
     }
 
-    function connectClean(instrument) {
-
-        // Trigger tone
-        let gain = new adsrGainNode(ctx);
-        gain.setOptions(audioOptions.getTrackerControls());
-        let gainNode = gain.getGainNode(triggerTime);
-
-        instrument.detune.value = audioOptions.options.detune;
-        // instrument -> gain
-        
-        instrument.connect(gainNode);
-        gainNode.connect(ctx.destination);
-
-        instrument.start(triggerTime);
-    }
-
-    if (audioOptions.options.delayEnabled) {
-        connectDelay(instrument)
-    } else {
-        connectClean(instrument);
-    }
+    play(instrument);
 }
 
 var schedule = new scheduleMeasure(ctx, scheduleAudioBeat);
 
-function setupBaseEvents () {
+function setupBaseEvents() {
     document.getElementById('play').addEventListener('click', function (e) {
         schedule.stop();
-        schedule.runSchedule(audioOptions.options.bpm);
+        schedule.runSchedule(getSetAudioOptions.options.bpm);
     });
 
     document.getElementById('pause').addEventListener('click', function (e) {
-        schedule.stop(); 
+        schedule.stop();
     });
-    
+
     document.getElementById('stop').addEventListener('click', function (e) {
         schedule.stop();
         schedule = new scheduleMeasure(ctx, scheduleAudioBeat);
-        schedule.measureLength = measureLength;
     });
-    
+
     document.getElementById('bpm').addEventListener('change', function (e) {
-        audioOptions.setTrackerControls();
+        getSetAudioOptions.setTrackerControls();
         if (schedule.running) {
             schedule.stop();
-            schedule.runSchedule(audioOptions.options.bpm);
+            schedule.runSchedule(getSetAudioOptions.options.bpm);
         }
     });
 
-    document.getElementById('measureLength').addEventListener('input',  (e) => {
+    document.getElementById('measureLength').addEventListener('input', (e) => {
 
-        $('#measureLength').bind('keypress keydown keyup', (e) =>{
-            if(e.keyCode == 13) { 
+        $('#measureLength').bind('keypress keydown keyup', (e) => {
+            if (e.keyCode == 13) {
 
-                e.preventDefault(); 
+                e.preventDefault();
 
                 let value = document.getElementById('measureLength').value;
                 let length = parseInt(value);
-                
+
                 if (length < 1) return;
                 schedule.measureLength = length;
-        
-                let track = schedule.getTrackerValues();                
+
+                let track = schedule.getTrackerValues();
                 setupTrackerHtml(currentSampleData, length);
                 schedule.measureLength = length;
                 schedule.loadTrackerValues(track)
@@ -189,14 +255,14 @@ function setupBaseEvents () {
             }
         });
     });
-    
+
     $('.base').on('change', function () {
-        audioOptions.setTrackerControls();
+        getSetAudioOptions.setTrackerControls();
     });
 }
-    
+
 function setupEvents() {
-    
+
     $('.cell').on('click', function (e) {
         let val = Object.assign({}, this.dataset);
         val.enabled = $(this).hasClass("enabled");
@@ -216,14 +282,14 @@ $('#sampleSet').on('change', function () {
 
 
 
-function tracksLocalStorage () {
+function tracksLocalStorage() {
 
-    this.setLocalStorage = function(update) {
+    this.setLocalStorage = function (update) {
         var storage = {};
         storage['Select'] = 'Select';
 
 
-        for ( var i = 0, len = localStorage.length; i < len; ++i ) {
+        for (var i = 0, len = localStorage.length; i < len; ++i) {
             let item = localStorage.key(i);
             storage[item] = item;
         }
@@ -254,13 +320,14 @@ function tracksLocalStorage () {
      * Get complete song
      */
     this.getTrack = function () {
-        let formData = audioOptions.getTrackerControls();
+        let formData = getSetAudioOptions.getTrackerControls();
+
         let beat = schedule.getTrackerValues();
-        let song = {"beat": beat, "settings": formData};
+        let song = { "beat": beat, "settings": formData };
         return song;
     }
 
-    this.setupStorage = function() {
+    this.setupStorage = function () {
 
         this.setLocalStorage();
         document.getElementById('save').addEventListener('click', (e) => {
@@ -275,29 +342,45 @@ function tracksLocalStorage () {
             this.setLocalStorage('update');
 
             $("#beat-list").val(filename);
-            alert('Track saved'); 
+            // alert('Track saved');
         });
 
-        $('#filename').bind('keypress keydown keyup', (e) =>{
-            if(e.keyCode == 13) { 
-                e.preventDefault(); 
+        // saveAsJson
+        document.getElementById('saveAsJson').addEventListener('click', (e) => {
+            e.preventDefault();
+
+            let song = this.getTrack();
+            let json = JSON.stringify(song);
+
+            let filename = this.getFilename();
+
+            var blob = new Blob([json], {type: "application/json"});
+            FileSaver.saveAs(blob, filename + ".json");
+
+
+        });
+
+        $('#filename').bind('keypress keydown keyup', (e) => {
+            if (e.keyCode == 13) {
+                e.preventDefault();
             }
         });
 
         document.getElementById('beat-list').addEventListener('change', (e) => {
             let item = $('#beat-list').val();
-            if (item === 'Select') {    
+            if (item === 'Select') {
                 document.getElementById('filename').value = '';
                 return;
             }
 
             document.getElementById('filename').value = item;
             let track = JSON.parse(localStorage.getItem(item));
+
             let formValues = new getSetFormValues();
             let form = document.getElementById("trackerControls");
 
             formValues.set(form, track.settings);
-            audioOptions.setTrackerControls(track.settings);
+            getSetAudioOptions.setTrackerControls(track.settings);
             schedule.stop();
             schedule.measureLength = track.settings.measureLength;
 
@@ -315,5 +398,4 @@ function tracksLocalStorage () {
 
         });
     };
- }
- 
+}

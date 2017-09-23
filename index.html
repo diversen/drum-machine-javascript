@@ -15,7 +15,8 @@
     <div id="controls">
         <button id="play">Play</button>
         <button id="pause">Pause</button>
-        <button id="stop">Stop</button><br />
+        <button id="stop">Stop</button>
+        <br />
         
 
         <form class="pure-form" id="trackerControls">
@@ -31,12 +32,18 @@
             <br />
             <input class="base" name="measureLength" id="measureLength"  style="width: 60px;" value="16">Measure length<br>
             <input class="base" name="bpm" id="bpm" type ="range" max ="1000" min="20" step ="1" value="460"> BPM<br>
+            <hr />
+            <input class="base" name="detune" id ="detune" type ="range" max ="1200" min="-1200" step ="10" value="0"> Detune / Tune<br />
+            <hr />
+            
+            <input class="base" name="gainEnabled" type="checkbox" id="gainEnabled" value="gain"> Enabled gain<br />
+            
             <input class="base" name="initGain" id="initGain" type ="range" max ="1" min="0" step ="0.1" value="0.5"> Init gain<br>
             <input class="base" name="maxGain" id="maxGain" type ="range" max ="1" min="0" step ="0.1" value="0.9"> Max gain<br>
             <input class="base" name="attackTime" id="attackTime" type ="range" max ="1" min="0" step ="0.01" value="0.08"> Attack time<br>
             <input class="base" name="sustainTime" id ="sustainTime" type ="range" max ="2" min="0" step ="0.1" value="0.1"> Sustain time<br>
             <input class="base" name="releaseTime" id ="releaseTime" type ="range" max ="5" min="0" step ="0.1" value="2"> Release time<br />
-            <input class="base" name="detune" id ="detune" type ="range" max ="1200" min="-1200" step ="10" value="0"> Detune / Tune<br />
+            
             
             <hr />
             <input class="base" name="delayEnabled" type="checkbox" id="delayEnabled" value="delay"> Enabled delay<br />
@@ -46,7 +53,7 @@
         <hr />
         <form class="pure-form">
             <input type="text" id="filename">
-            <button id="save">Save as </button><br />
+            <button id="save">Save as </button><button id="saveAsJson">Get JSON</button> <br />
         
             <span id="load-storage"></span>
             <button id="delete">Delete selected</button>
