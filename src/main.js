@@ -15,28 +15,10 @@ const getSetAudioOptions = new getSetControls();
 const ctx = new AudioContext();
 const defaultTrack = require('./track-2');
 
-var remoteUrl = 'https://mdn.github.io/voice-change-o-matic/audio/concert-crowd.ogg'
-
-async function go() {
-    try {
-        const concertHallBuffer = await sampleLoader(remoteUrl, ctx);
-        // console.log(sample)
-        let convolver = ctx.createConvolver();
-        convolver.buffer = concertHallBuffer;
-        return convolver;
-
-        // console.log(sample)
-    } catch (e) {
-        console.error(e); // 💩
-    }
-}
-
 var buffers;
 var currentSampleData;
 var storage;
 var trackerDebug;
-var convolver;
-
 
 function initializeSampleSet(ctx, dataUrl, track) {
 
@@ -59,9 +41,7 @@ function initializeSampleSet(ctx, dataUrl, track) {
         schedule.loadTrackerValues(track.beat);
         setupEvents();
     });
-    go().then(function (data) {
-        convolver = data;
-    });
+   
 }
 
 window.onload = function () {
@@ -115,33 +95,19 @@ function scheduleAudioBeat(beat, triggerTime) {
 
     function play(source) {
 
-        
         source.detune.value = options.detune;
-
 
         // Gain
         let node = routeGain(source)
-
-        // convolver.connect(gainNode);
-        
-
-        
-        
-        // Delay
         node = routeDelay(node);
-
         node = routeCompressor(node);
-
-        // delayNode.connect(compressor);
         node.connect(ctx.destination);
-
-
         source.start(triggerTime);
 
     }
 
-
     function routeCompressor (node) {
+        // Not used yet
         return node;
         var compressor = ctx.createDynamicsCompressor();
         compressor.threshold.value = -100; // -100 - 0
@@ -173,6 +139,7 @@ function scheduleAudioBeat(beat, triggerTime) {
 
     }
 
+    // Note delay always uses above gain - even if not enabled
     function routeDelay(node) {
         if (!options.delayEnabled) {
             return node;

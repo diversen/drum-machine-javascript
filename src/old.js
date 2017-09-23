@@ -1,3 +1,22 @@
+var remoteUrl = 'https://mdn.github.io/voice-change-o-matic/audio/concert-crowd.ogg'
+async function go() {
+    try {
+        const concertHallBuffer = await sampleLoader(remoteUrl, ctx);
+        // console.log(sample)
+        let convolver = ctx.createConvolver();
+        convolver.buffer = concertHallBuffer;
+        return convolver;
+
+        // console.log(sample)
+    } catch (e) {
+        console.error(e); // 💩
+    }
+}
+
+var convolver;
+go().then(function (data) {
+    convolver = data;
+});
 
 function scheduleAudioBeat(beat, triggerTime) {
     
