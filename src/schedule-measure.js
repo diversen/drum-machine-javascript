@@ -1,4 +1,5 @@
 const WAAClock = require('waaclock');
+const trackerTable = require('./tracker-table');
 const hasClass = require('has-class');
 
 /**
@@ -16,6 +17,20 @@ function scheduleMeasure(ctx, scheduleAudioBeat) {
     this.clock = new WAAClock(ctx);
     this.clock.start();
     this.running = false;
+
+    /**
+     * Draw a tracker table by numRows and numCols
+     */
+    this.drawTracker = function(numRows, numCols, data) {
+        
+        let htmlTable = new trackerTable();
+        
+        htmlTable.setRows(numRows, numCols, data);
+        let str = htmlTable.getTable();
+        
+        let t = document.getElementById('tracker-parent');
+        t.insertAdjacentHTML('afterbegin', str);
+    }
 
     /**
      * Push current beat one forward

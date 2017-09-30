@@ -63,15 +63,11 @@ window.onload = function () {
 var instrumentData = {};
 function setupTrackerHtml(data, measureLength) {
     instrumentData = data;
+    instrumentData.title = instrumentData.filename;
+
     document.getElementById("tracker-parent").innerHTML = '';
-
-    let htmlTable = new trackerTable();
-
-    htmlTable.setRows(data.filename.length, measureLength);
-    var str = htmlTable.getTable();
-
-    var t = document.getElementById('tracker-parent');
-    t.insertAdjacentHTML('afterbegin', str);
+    schedule.drawTracker(data.filename.length, measureLength, instrumentData);
+    return;
 }
 
 function disconnectNode(node, options) {
@@ -138,7 +134,7 @@ function scheduleAudioBeat(beat, triggerTime) {
         source.connect(gainNode);
         return gainNode;
 
-        
+
     }
 
     // Note delay always uses above gain - even if not enabled
@@ -229,13 +225,9 @@ function setupBaseEvents() {
     });
 }
 
-
-
 $('#sampleSet').on('change', function () {
     initializeSampleSet(ctx, this.value);
 });
-
-
 
 function tracksLocalStorage() {
 

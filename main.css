@@ -14,14 +14,14 @@ a {
 }
 
 .tracker-cell {
-    height: 15px;
-    min-width: 15px;
+    height: 20px;
+    min-width: 20px;
     border: black;
     border-color: black;
     background: #fff;
     border-style: solid;
     border-width: 1px;
-    font-size: 60%;
+    font-size: 75%;
     /*background-color: pink;*/
 }
 
