@@ -37,22 +37,21 @@
             <hr />
             
             <input class="base" name="gainEnabled" type="checkbox" id="gainEnabled" value="gain"> Enabled gain<br />
-            
+
             <input class="base" name="initGain" id="initGain" type ="range" max ="1" min="0" step ="0.1" value="0.5"> Init gain<br>
             <input class="base" name="maxGain" id="maxGain" type ="range" max ="1" min="0" step ="0.1" value="0.9"> Max gain<br>
             <input class="base" name="attackTime" id="attackTime" type ="range" max ="1" min="0" step ="0.01" value="0.08"> Attack time<br>
             <input class="base" name="sustainTime" id ="sustainTime" type ="range" max ="2" min="0" step ="0.1" value="0.1"> Sustain time<br>
-            <input class="base" name="releaseTime" id ="releaseTime" type ="range" max ="5" min="0" step ="0.1" value="2"> Release time<br />
-            
-            
+            <input class="base" name="releaseTime" id ="releaseTime" type ="range" max ="5" min="0" step ="0.1" value="2"> Release time<br />            
             <hr />
+
             <input class="base" name="delayEnabled" type="checkbox" id="delayEnabled" value="delay"> Enabled delay<br />
             <input class="base" name="delay" id ="delay" type ="range" max ="1" min="0" step ="0.01" value="0.01"> Delay<br>
             <input class="base" name="filter" id ="filter" type ="range" max ="10000" min="20" step ="0.1" value="1000"> Filter<br>
         </form>
         <hr />
         <form class="pure-form">
-            <input type="text" id="filename">
+            <input type="text" id="filename"><br />
             <button id="save">Save as </button><button id="saveAsJson">Get JSON</button> <br />
         
             <span id="load-storage"></span>

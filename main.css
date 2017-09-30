@@ -35,5 +35,6 @@ a {
 }
 
 #tracker-parent {
+    float:left;
     overflow-x: visible;
 }
