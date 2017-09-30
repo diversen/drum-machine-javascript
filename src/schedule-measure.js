@@ -176,7 +176,9 @@ function scheduleMeasure(ctx, scheduleAudioBeat) {
             if (data.enabled === true) {
                 let selector = `.tracker-cell[data-row-id="${data.rowId}"][data-cell-id="${data.cellId}"]`;
                 let elem = document.querySelector(selector);
-                elem.classList.add("tracker-enabled");
+                if (elem) {
+                    elem.classList.add("tracker-enabled");
+                }
             }
         });
     };

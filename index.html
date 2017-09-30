@@ -1,26 +1,31 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>javascript drum machine"></title>
-<meta name="description" content="A simple javascript drum machine / drum sequencer built with HTML / CSS and Javascript."/>
+    <meta name="description" content="A simple javascript drum machine / drum sequencer built with HTML / CSS and Javascript."
+    />
 </head>
-<link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
+<link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w"
+    crossorigin="anonymous">
+
 <body>
-    
-    
+
+
     <link rel="stylesheet" type="text/css" href="main.css" />
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 
-    <div id="tracker-parent"></div>
-    <div id="controls">
-        <button id="play">Play</button>
-        <button id="pause">Pause</button>
-        <button id="stop">Stop</button>
-        <br />
-        
+    <div id="tracker-container">
+        <div id="tracker-parent"></div>
+        <div id="tracker-controls">
+            <button id="play">Play</button>
+            <button id="pause">Pause</button>
+            <button id="stop">Stop</button>
+            <br />
 
-        <form class="pure-form" id="trackerControls">
-            <select name="sampleSet" class="base" id="sampleSet">
+
+            <form class="pure-form" id="trackerControls">
+                <select name="sampleSet" class="base" id="sampleSet">
                 <option value="https://raw.githubusercontent.com/oramics/sampled/master/DM/CR-78/sampled.instrument.json">CR-78</option>
                 <option value="https://raw.githubusercontent.com/oramics/sampled/master/DM/TR-909/Detroit/sampled.instrument.json">TR-909 Detroit</option>
                 <option value="https://raw.githubusercontent.com/oramics/sampled/master/DM/TR-909/SP/sampled.instrument.json">TR-909 SP</option>
@@ -29,36 +34,42 @@
                 <option value="https://raw.githubusercontent.com/oramics/sampled/master/DM/LM-2/sampled.instrument.json">LM-2</option>
                 <option value="https://raw.githubusercontent.com/oramics/sampled/master/DRUMS/pearl-master-studio/sampled.instrument.json">Pearl Master Studio</option>
             </select>
-            <br />
-            <input class="base" name="measureLength" id="measureLength"  style="width: 60px;" value="16">Measure length<br>
-            <input class="base" name="bpm" id="bpm" type ="range" max ="1000" min="20" step ="1" value="460"> BPM<br>
-            <hr />
-            <input class="base" name="detune" id ="detune" type ="range" max ="1200" min="-1200" step ="10" value="0"> Detune / Tune<br />
-            <hr />
-            
-            <input class="base" name="gainEnabled" type="checkbox" id="gainEnabled" value="gain"> Enabled gain<br />
+                <br />
+                <input class="base" name="measureLength" id="measureLength" style="width: 60px;" value="16">Measure length<br>
+                <input class="base" name="bpm" id="bpm" type="range" max="1000" min="20" step="1" value="460"> BPM<br>
+                <hr />
+                <input class="base" name="detune" id="detune" type="range" max="1200" min="-1200" step="10" value="0"> Detune
+                / Tune<br />
+                <hr />
 
-            <input class="base" name="initGain" id="initGain" type ="range" max ="1" min="0" step ="0.1" value="0.5"> Init gain<br>
-            <input class="base" name="maxGain" id="maxGain" type ="range" max ="1" min="0" step ="0.1" value="0.9"> Max gain<br>
-            <input class="base" name="attackTime" id="attackTime" type ="range" max ="1" min="0" step ="0.01" value="0.08"> Attack time<br>
-            <input class="base" name="sustainTime" id ="sustainTime" type ="range" max ="2" min="0" step ="0.1" value="0.1"> Sustain time<br>
-            <input class="base" name="releaseTime" id ="releaseTime" type ="range" max ="5" min="0" step ="0.1" value="2"> Release time<br />            
-            <hr />
+                <input class="base" name="gainEnabled" type="checkbox" id="gainEnabled" value="gain"> Enabled gain<br />
 
-            <input class="base" name="delayEnabled" type="checkbox" id="delayEnabled" value="delay"> Enabled delay<br />
-            <input class="base" name="delay" id ="delay" type ="range" max ="1" min="0" step ="0.01" value="0.01"> Delay<br>
-            <input class="base" name="filter" id ="filter" type ="range" max ="10000" min="20" step ="0.1" value="1000"> Filter<br>
-        </form>
-        <hr />
-        <form class="pure-form">
-            <input type="text" id="filename"><br />
-            <button id="save">Save as </button><button id="saveAsJson">Get JSON</button> <br />
-        
-            <span id="load-storage"></span>
-            <button id="delete">Delete selected</button>
-        </form>
+                <input class="base" name="initGain" id="initGain" type="range" max="1" min="0" step="0.1" value="0.5"> Init
+                gain<br>
+                <input class="base" name="maxGain" id="maxGain" type="range" max="1" min="0" step="0.1" value="0.9"> Max
+                gain<br>
+                <input class="base" name="attackTime" id="attackTime" type="range" max="1" min="0" step="0.01" value="0.08">                Attack time<br>
+                <input class="base" name="sustainTime" id="sustainTime" type="range" max="2" min="0" step="0.1" value="0.1">                Sustain time<br>
+                <input class="base" name="releaseTime" id="releaseTime" type="range" max="5" min="0" step="0.1" value="2">                Release time<br />
+                <hr />
+
+                <input class="base" name="delayEnabled" type="checkbox" id="delayEnabled" value="delay"> Enabled delay<br
+                />
+                <input class="base" name="delay" id="delay" type="range" max="1" min="0" step="0.01" value="0.01"> Delay<br>
+                <input class="base" name="filter" id="filter" type="range" max="10000" min="20" step="0.1" value="1000">                Filter<br>
+            </form>
+            <hr />
+            <form class="pure-form">
+                <input type="text" id="filename"><br />
+                <button id="save">Save as </button><button id="saveAsJson">Get JSON</button> <br />
+
+                <span id="load-storage"></span>
+                <button id="delete">Delete selected</button>
+            </form>
+        </div>
     </div>
     <script src="bundle.js"></script>
-    
+
 </body>
+
 </html>

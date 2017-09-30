@@ -13,6 +13,30 @@ a {
     color: hotpink;
 }
 
+#tracker-container {
+    background-color: ghostwhite;
+    width: 100%;
+    padding: 20px;
+    background-color: #F4A360;
+    display: flex; 
+    flex-wrap:wrap;
+}
+
+#tracker-controls {
+    margin-left: 20px;
+    padding:20px;
+    background-color: tomato;
+}
+
+
+#tracker-parent {
+    padding:20px;
+    flex-basis: auto;
+    background-color: gainsboro;
+    /*overflow-x: visible;*/
+}
+
+
 .tracker-cell {
     height: 20px;
     min-width: 20px;
@@ -22,6 +46,7 @@ a {
     border-style: solid;
     border-width: 1px;
     font-size: 75%;
+    padding:2px;
     /*background-color: pink;*/
 }
 
@@ -32,9 +57,4 @@ a {
 .tracker-current {
     background: purple;
 
-}
-
-#tracker-parent {
-    float:left;
-    overflow-x: visible;
 }
