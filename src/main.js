@@ -8,6 +8,7 @@ const scheduleMeasure = require('./schedule-measure');
 const audioDistortionNode = require('./audio-distortion-node');
 const sampleLoader = require('tiny-sample-loader');
 const FileSaver = require('file-saver');
+// var $ = require('cheerio');
 
 const getSetControls = require('./get-set-controls');
 const getSetAudioOptions = new getSetControls();
@@ -39,7 +40,7 @@ function initializeSampleSet(ctx, dataUrl, track) {
         currentSampleData = sampleData;
         setupTrackerHtml(sampleData, track.settings.measureLength);
         schedule.loadTrackerValues(track.beat);
-        setupEvents();
+        schedule.setupEvents();
     });
    
 }
@@ -137,6 +138,7 @@ function scheduleAudioBeat(beat, triggerTime) {
         source.connect(gainNode);
         return gainNode;
 
+        
     }
 
     // Note delay always uses above gain - even if not enabled
@@ -172,7 +174,6 @@ function scheduleAudioBeat(beat, triggerTime) {
 
         return delay;
     }
-
     play(instrument);
 }
 
@@ -218,7 +219,7 @@ function setupBaseEvents() {
                 setupTrackerHtml(currentSampleData, length);
                 schedule.measureLength = length;
                 schedule.loadTrackerValues(track)
-                setupEvents();
+                schedule.setupEvents();
             }
         });
     });
@@ -228,20 +229,7 @@ function setupBaseEvents() {
     });
 }
 
-function setupEvents() {
 
-    $('.cell').on('click', function (e) {
-        let val = Object.assign({}, this.dataset);
-        val.enabled = $(this).hasClass("enabled");
-
-        let currentBeat = $('.current').data('cell-id');
-        if (val.cellId > currentBeat) {
-            schedule.scheduleAudioBeatNow(val);
-        }
-
-        $(this).toggleClass('enabled');
-    });
-}
 
 $('#sampleSet').on('change', function () {
     initializeSampleSet(ctx, this.value);

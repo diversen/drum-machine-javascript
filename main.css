@@ -13,7 +13,7 @@ a {
     color: hotpink;
 }
 
-.cell {
+.tracker-cell {
     height: 15px;
     min-width: 15px;
     border: black;
@@ -25,11 +25,11 @@ a {
     /*background-color: pink;*/
 }
 
-.enabled {
-    background: black;
+.tracker-enabled {
+    background: orange;
 }
 
-.current {
+.tracker-current {
     background: purple;
 
 }

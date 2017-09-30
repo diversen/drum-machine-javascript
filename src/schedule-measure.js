@@ -1,9 +1,13 @@
 const WAAClock = require('waaclock');
-const getAudioOptions = require('./get-set-controls');
-const audioOptions = new getAudioOptions();
+const hasClass = require('has-class');
 
+/**
+ * Construct object
+ * @param {audioContext} ctx 
+ * @param {function} scheduleAudioBeat
+ */
 function scheduleMeasure(ctx, scheduleAudioBeat) {
-    
+
     this.measureLength = 16;
     this.scheduleAudioBeat = scheduleAudioBeat;
     this.scheduleForward = 0.1;
@@ -13,12 +17,19 @@ function scheduleMeasure(ctx, scheduleAudioBeat) {
     this.clock.start();
     this.running = false;
 
+    /**
+     * Push current beat one forward
+     */
     this.next = function () {
         this.current++;
         if (this.current >= this.measureLength) {
             this.current = 0;
         }
     };
+
+    /**
+     * Calculate milli seconds per beat
+     */
     this.milliPerBeat = function (beats) {
         if (!beats) {
             beats = 60;
@@ -26,6 +37,9 @@ function scheduleMeasure(ctx, scheduleAudioBeat) {
         return 1000 * 60 / beats;
     };
 
+    /**
+     * Get a tracker row from a cell-id
+     */
     this.getTrackerRowValues = function (cellId) {
         let values = [];
         let selector = `[data-cell-id="${cellId}"]`;
@@ -33,29 +47,36 @@ function scheduleMeasure(ctx, scheduleAudioBeat) {
         let elems = document.querySelectorAll(selector);
         elems.forEach((el) => {
             let val = Object.assign({}, el.dataset);
-            val.enabled = el.classList.contains('enabled');
+            val.enabled = el.classList.contains('tracker-enabled');
             values.push(val);
         });
         return values;
     };
-    
 
+    /**
+     * Schedule a beat column
+     */
     this.schedule = function () {
-
-        let beats = this.getTrackerRowValues(this.current);
+        let beatColumn = this.getTrackerRowValues(this.current);
         let now = ctx.currentTime;
 
         let selector = `[data-cell-id="${this.current}"]`;
 
         let event = this.clock.callbackAtTime(() => {
-            $(selector).addClass('current');
+            let elems = document.querySelectorAll(selector);
+            elems.forEach( (e) => {
+                e.classList.add('tracker-current')
+            })
         }, now + this.scheduleForward);
 
         this.clock.callbackAtTime(() => {
-            $(selector).removeClass('current');
+            let elems = document.querySelectorAll(selector);
+            elems.forEach( (e) => {
+                e.classList.remove('tracker-current')
+            })
         }, now + this.scheduleForward + this.milliPerBeat(this.bpm) / 1000);
 
-        beats.forEach((beat) => {
+        beatColumn.forEach((beat) => {
             this.scheduleBeat(beat, now);
         });
     };
@@ -113,31 +134,57 @@ function scheduleMeasure(ctx, scheduleAudioBeat) {
         this.running = false;
         clearInterval(this.interval);
     };
-    
+
     this.getEventKey = function getEventKey(beat) {
         return beat.rowId + beat.cellId;
     };
-    
+
     this.getTrackerValues = function () {
         let values = [];
-        $(".cell").each(function () {
-            let val = Object.assign({}, this.dataset);
-            val.enabled = $(this).hasClass("enabled");
+        let elems = document.querySelectorAll('.tracker-cell');
+        elems.forEach(function (e) {
+            let val = Object.assign({}, e.dataset);
+            val.enabled = hasClass(e, "tracker-enabled");
             values.push(val);
         });
         return values;
     };
-    
-    this.loadTrackerValues = function(json) {
-        $('.cell').removeClass('enabled');
-        json.forEach(function (elem) {
-            if (elem.enabled === true) {
-                let selector = `[data-row-id="${elem.rowId}"][data-cell-id="${elem.cellId}"]`;
-                $(selector).addClass("enabled");
+
+    this.loadTrackerValues = function (json) {
+
+        let elems = document.querySelectorAll('.tracker-enabled');
+        elems.forEach(function(e) {
+            e.classList.remove('tracker-enabled');
+        });
+
+        json.forEach(function (data) {
+            if (data.enabled === true) {
+                let selector = `.tracker-cell[data-row-id="${data.rowId}"][data-cell-id="${data.cellId}"]`;
+                let elem = document.querySelector(selector);
+                elem.classList.add("tracker-enabled");
             }
         });
     };
 
+    /**
+     * Listen on tracker-cell
+     */
+    this.setupEvents = function () {
+        
+        let elems = document.querySelectorAll('.tracker-cell');
+        
+        elems.forEach(function (e) {
+            e.addEventListener('click', function(e) {
+                let val = Object.assign({}, e.target.dataset);
+                val.enabled = hasClass(e.target, "tracker-enabled");
+                let currentBeat = e.target.dataset.cellId;
+                if (val.cellId > currentBeat) {
+                    this.scheduleAudioBeatNow(val);
+                }
+                e.target.classList.toggle('tracker-enabled');
+            })
+        })
+    }
 }
 
 module.exports = scheduleMeasure;
