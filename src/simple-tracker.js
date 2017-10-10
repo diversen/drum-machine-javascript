@@ -5,9 +5,9 @@ const hasClass = require('has-class');
 /**
  * Construct object
  * @param {audioContext} ctx 
- * @param {function} scheduleAudioBeat
+ * @param {function} scheduleAudioBeat funtion to call planning forward
  */
-function scheduleMeasure(ctx, scheduleAudioBeat) {
+function tracker(ctx, scheduleAudioBeat) {
 
     this.measureLength = 16;
     this.scheduleAudioBeat = scheduleAudioBeat;
@@ -28,7 +28,9 @@ function scheduleMeasure(ctx, scheduleAudioBeat) {
         htmlTable.setRows(numRows, numCols, data);
         let str = htmlTable.getTable();
         
+        // document.getElementById("tracker-parent").innerHTML = '';
         let t = document.getElementById('tracker-parent');
+        t.innerHTML = '';
         t.insertAdjacentHTML('afterbegin', str);
     }
 
@@ -154,6 +156,9 @@ function scheduleMeasure(ctx, scheduleAudioBeat) {
         return beat.rowId + beat.cellId;
     };
 
+    /**
+     * Get tracker values
+     */
     this.getTrackerValues = function () {
         let values = [];
         let elems = document.querySelectorAll('.tracker-cell');
@@ -165,6 +170,9 @@ function scheduleMeasure(ctx, scheduleAudioBeat) {
         return values;
     };
 
+    /**
+     * Load tracker values in JSON format
+     */
     this.loadTrackerValues = function (json) {
 
         let elems = document.querySelectorAll('.tracker-enabled');
@@ -185,6 +193,7 @@ function scheduleMeasure(ctx, scheduleAudioBeat) {
 
     /**
      * Listen on tracker-cell
+     * Schedule if cell is clicked and toggle css class
      */
     this.setupEvents = function () {
         
@@ -204,4 +213,4 @@ function scheduleMeasure(ctx, scheduleAudioBeat) {
     }
 }
 
-module.exports = scheduleMeasure;
+module.exports = tracker;
