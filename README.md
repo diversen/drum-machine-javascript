@@ -20,9 +20,15 @@ Install deps:
 
     npm install
 
-Build: 
+## Watch and build: 
+
+You will need watchify `sudo npm install -g watchify`
 
     watchify src/main.js -t --debug -o 'bundle.js'
+
+Or (short form of above) 
+
+    npm run watch
 
 ## Licence
 
