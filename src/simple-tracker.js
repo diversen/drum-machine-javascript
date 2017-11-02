@@ -1,5 +1,5 @@
 const WAAClock = require('waaclock');
-const trackerTable = require('./tracker-table');
+const trackerTable = require('./tracker-table-svg');
 const hasClass = require('has-class');
 
 /**
