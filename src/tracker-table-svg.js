@@ -7,6 +7,11 @@ function trackerTableSvg() {
         cellSpace: 4
     }
 
+    this.options.cellWithSpace = this.options.cellSpace + this.options.cellWidth
+    this.options.cellFirstWithSpace = this.options.cellFirst + this.options.cellSpace
+
+    this.op
+
     /**
      * @param int number of cells
      * @param int number of rows
@@ -31,10 +36,9 @@ function trackerTableSvg() {
 
         
         let boxX = (this.options.cellFirst + this.options.cellSpace) + 
-                   (this.numCells * (this.options.cellSpace + this.options.cellWidth))
-        let boxY = (this.numRows + 1) * (this.options.cellSpace + this.options.cellWidth)
-        
-        console.log(boxY)
+                   (this.numCells * this.options.cellWithSpace)
+        let boxY = (this.numRows + 1) * (this.options.cellWithSpace)
+
         let html = `
         <svg 
             xmlns="http://www.w3.org/2000/svg" 
@@ -53,9 +57,7 @@ function trackerTableSvg() {
 
         let str = '';
         str += `
-            <rect 
-
-
+            <rect
                 class="tracker-cell-first" 
                 data-row-id="${rowID}" 
                 width="${this.options.cellFirst}" 
@@ -73,7 +75,7 @@ function trackerTableSvg() {
                 </text>`;
         }
 
-        this.currentX = this.options.cellFirst+this.options.cellSpace
+        this.currentX = this.options.cellFirstWithSpace
         return str;
     };
 
@@ -96,8 +98,8 @@ function trackerTableSvg() {
                 class="tracker-cell" 
                 data-row-id="${rowID}" 
                 data-cell-id="${c}" 
-                width="16" 
-                height="16" 
+                width="${this.options.cellWidth}" 
+                height="${this.options.cellWidth}" 
                 x="${this.getCurrentX(x)}" 
                 y="${this.y}">
             </rect>`;
@@ -112,14 +114,14 @@ function trackerTableSvg() {
                     data-row-id="${rowID}" 
                     data-cell-id="${c}" 
                     x="${this.getCurrentX(x+2)}" 
-                    y="12">${text}
+                    y="10">${text}
                 </text>`;
             }
             
-            x += 20
+            x += this.options.cellWithSpace
         }
 
-        this.y += 20
+        this.y += this.options.cellWithSpace
         return str;
     };
 }

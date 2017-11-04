@@ -5,7 +5,7 @@ const hasClass = require('has-class');
 /**
  * Construct object
  * @param {audioContext} ctx 
- * @param {function} scheduleAudioBeat funtion to call planning forward
+ * @param {function} scheduleAudioBeat funtion when an audio is played
  */
 function tracker(ctx, scheduleAudioBeat) {
 

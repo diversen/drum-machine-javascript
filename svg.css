@@ -4,11 +4,11 @@
     font-family: 'Merriweather'; 
 }
 
-/*
+
 #controls {
     font-family: 'Merriweather';
     font-size: 10px;
-}*/
+}
 a {
     color: hotpink;
 }
@@ -30,11 +30,14 @@ a {
 
 
 #tracker-parent {
-    width:40%;
+    width:50%;
     padding:20px;
     flex-basis: auto;
     background-color: gainsboro;
     padding: 8px;
+    height: 80%;
+    display:block;
+
     /*overflow-x: visible;*/
 }
 
