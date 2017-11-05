@@ -37,7 +37,7 @@ a {
 }
 
 
-.tracker-cell {
+.tracker-cell, .tracker-first-cell, .tracker-cell-header {
     height: 20px;
     min-width: 20px;
     border: black;

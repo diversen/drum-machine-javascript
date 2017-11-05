@@ -62,8 +62,6 @@ var instrumentData = {};
 function setupTrackerHtml(data, measureLength) {
     instrumentData = data;
     instrumentData.title = instrumentData.filename;
-
-    
     schedule.drawTracker(data.filename.length, measureLength, instrumentData);
     return;
 }

@@ -1,5 +1,5 @@
 const WAAClock = require('waaclock');
-const trackerTable = require('./tracker-table-svg');
+const trackerTable = require('./tracker-table');
 const hasClass = require('has-class');
 
 /**
@@ -24,11 +24,10 @@ function tracker(ctx, scheduleAudioBeat) {
     this.drawTracker = function(numRows, numCols, data) {
         
         let htmlTable = new trackerTable();
-        
+
         htmlTable.setRows(numRows, numCols, data);
         let str = htmlTable.getTable();
         
-        // document.getElementById("tracker-parent").innerHTML = '';
         let t = document.getElementById('tracker-parent');
         t.innerHTML = '';
         t.insertAdjacentHTML('afterbegin', str);
@@ -57,9 +56,9 @@ function tracker(ctx, scheduleAudioBeat) {
     /**
      * Get a tracker row from a cell-id
      */
-    this.getTrackerRowValues = function (cellId) {
+    this.getTrackerRowValues = function (colId) {
         let values = [];
-        let selector = `[data-cell-id="${cellId}"]`;
+        let selector = `[data-col-id="${colId}"]`;
 
         let elems = document.querySelectorAll(selector);
         elems.forEach((el) => {
@@ -77,7 +76,7 @@ function tracker(ctx, scheduleAudioBeat) {
         let beatColumn = this.getTrackerRowValues(this.current);
         let now = ctx.currentTime;
 
-        let selector = `[data-cell-id="${this.current}"]`;
+        let selector = `[data-col-id="${this.current}"]`;
 
         let event = this.clock.callbackAtTime(() => {
             let elems = document.querySelectorAll(selector);
@@ -101,7 +100,7 @@ function tracker(ctx, scheduleAudioBeat) {
     this.scheduleBeat = function (beat, now) {
 
         let triggerTime = now + this.scheduleForward;
-        this.scheduleMap[beat.cellId] = triggerTime;
+        this.scheduleMap[beat.colId] = triggerTime;
         if (beat.enabled) {
             this.eventMap[this.getEventKey(beat)] = this.clock.callbackAtTime(() => {
                 this.scheduleAudioBeat(beat, triggerTime);
@@ -122,7 +121,7 @@ function tracker(ctx, scheduleAudioBeat) {
             return;
         }
 
-        let triggerTime = this.scheduleMap[0] + beat.cellId * this.milliPerBeat(this.bpm) / 1000;
+        let triggerTime = this.scheduleMap[0] + beat.colId * this.milliPerBeat(this.bpm) / 1000;
         let now = ctx.currentTime;
         this.eventMap[this.getEventKey(beat)] = this.clock.callbackAtTime(() => {
             this.scheduleAudioBeat(beat, triggerTime);
@@ -153,7 +152,7 @@ function tracker(ctx, scheduleAudioBeat) {
     };
 
     this.getEventKey = function getEventKey(beat) {
-        return beat.rowId + beat.cellId;
+        return beat.rowId + beat.colId;
     };
 
     /**
@@ -182,7 +181,7 @@ function tracker(ctx, scheduleAudioBeat) {
 
         json.forEach(function (data) {
             if (data.enabled === true) {
-                let selector = `.tracker-cell[data-row-id="${data.rowId}"][data-cell-id="${data.cellId}"]`;
+                let selector = `.tracker-cell[data-row-id="${data.rowId}"][data-col-id="${data.colId}"]`;
                 let elem = document.querySelector(selector);
                 if (elem) {
                     elem.classList.add("tracker-enabled");
@@ -203,8 +202,8 @@ function tracker(ctx, scheduleAudioBeat) {
             e.addEventListener('click', function(e) {
                 let val = Object.assign({}, e.target.dataset);
                 val.enabled = hasClass(e.target, "tracker-enabled");
-                let currentBeat = e.target.dataset.cellId;
-                if (val.cellId > currentBeat) {
+                let currentBeat = e.target.dataset.colId;
+                if (val.colId > currentBeat) {
                     this.scheduleAudioBeatNow(val);
                 }
                 e.target.classList.toggle('tracker-enabled');

@@ -10,33 +10,31 @@ function trackerTableSvg() {
     this.options.cellWithSpace = this.options.cellSpace + this.options.cellWidth
     this.options.cellFirstWithSpace = this.options.cellFirst + this.options.cellSpace
 
-    this.op
-
     /**
      * @param int number of cells
      * @param int number of rows
      * @param object data
      */
-    this.setRows = function (numRows, numCells, data) {
+    this.setRows = function (numRows, numRows, data) {
 
         this.numRows = numRows;
-        this.numCells = numCells;
+        this.numRows = numRows;
 
-        this.setHeader(numCells, data);
+        this.setHeader(numRows, data);
         for (let rowID = 0; rowID < numRows; rowID++) {
-            this.str += this.getCells(rowID, numCells, data);
+            this.str += this.getCells(rowID, numRows, data);
         }
     };
 
-    this.setHeader = function (numCells, data) {
-        this.str += this.getCells('header', numCells, { header: true });
+    this.setHeader = function (numRows, data) {
+        this.str += this.getCells('header', numRows, { header: true });
     };
 
     this.getTable = function () {
 
         
         let boxX = (this.options.cellFirst + this.options.cellSpace) + 
-                   (this.numCells * this.options.cellWithSpace)
+                   (this.numRows * this.options.cellWithSpace)
         let boxY = (this.numRows + 1) * (this.options.cellWithSpace)
 
         let html = `
@@ -85,19 +83,19 @@ function trackerTableSvg() {
     }
 
     this.y = 0;
-    this.getCells = function (rowID, numCells, data) {
+    this.getCells = function (rowID, numRows, data) {
         var str = '';
         var x = 0;
 
         // Get first cell. E.g. instrument
         str += this.getFirstCell(rowID, data);
-        for (let c = 0; c < numCells; c++) {
+        for (let c = 0; c < numRows; c++) {
             
             str += `
             <rect 
                 class="tracker-cell" 
                 data-row-id="${rowID}" 
-                data-cell-id="${c}" 
+                data-col-id="${c}" 
                 width="${this.options.cellWidth}" 
                 height="${this.options.cellWidth}" 
                 x="${this.getCurrentX(x)}" 
@@ -112,9 +110,9 @@ function trackerTableSvg() {
                     
                     class="tracker-cell-text" 
                     data-row-id="${rowID}" 
-                    data-cell-id="${c}" 
+                    data-col-id="${c}" 
                     x="${this.getCurrentX(x+2)}" 
-                    y="10">${text}
+                    y="12">${text}
                 </text>`;
             }
             
