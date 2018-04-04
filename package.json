@@ -1,6 +1,6 @@
 {
   "name": "drum-machine",
-  "version": "2.0.8",
+  "version": "2.0.9",
   "description": "A simple drum machine / sequencer written in javascript",
   "main": "src/main.js",
   "scripts": {
