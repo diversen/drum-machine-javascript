@@ -1,6 +1,6 @@
 {
   "name": "drum-machine",
-  "version": "2.0.7",
+  "version": "2.0.8",
   "description": "A simple drum machine / sequencer written in javascript",
   "main": "src/main.js",
   "scripts": {
@@ -22,9 +22,9 @@
   },
   "homepage": "https://github.com/diversen/drum-machine-javascript#readme",
   "dependencies": {
-    "adsr-gain-node": "^1.0.6",
+    "adsr-gain-node": "^1.0.8",
     "babel-polyfill": "^6.26.0",
-    "file-saver": "^1.3.3",
+    "file-saver": "^1.3.8",
     "get-html-rows-cells": "^2.0.0",
     "get-set-form-values": "^3.0.1",
     "has-class": "^1.0.6",
