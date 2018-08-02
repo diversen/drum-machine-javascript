@@ -1,6 +1,6 @@
 {
   "name": "drum-machine",
-  "version": "2.0.9",
+  "version": "2.0.10",
   "description": "A simple drum machine / sequencer written in javascript",
   "main": "src/main.js",
   "scripts": {
@@ -29,7 +29,7 @@
     "get-set-form-values": "^3.0.1",
     "has-class": "^1.0.6",
     "load-sample-set": "^4.0.2",
-    "select-element": "^2.0.0",
+    "select-element": "^2.1.0",
     "tiny-sample-loader": "^2.0.0",
     "toggle-class": "0.0.0",
     "waaclock": "^0.5.3"

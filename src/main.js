@@ -12,7 +12,7 @@ const getSetControls = require('./get-set-controls');
 const getSetAudioOptions = new getSetControls();
 
 const ctx = new AudioContext();
-const defaultTrack = require('./track-2');
+const defaultTrack = require('./track-3');
 
 var buffers;
 var currentSampleData;
@@ -32,8 +32,11 @@ function initializeSampleSet(ctx, dataUrl, track) {
         }
 
         if (!track.settings.measureLength) {
+           //  console.log('no measure length')
             track.settings.measureLength = 16;
         }
+
+        console.log(track.settings.measureLength)
 
         currentSampleData = sampleData;
         setupTrackerHtml(sampleData, track.settings.measureLength);
@@ -73,12 +76,6 @@ function disconnectNode(node, options) {
         node.disconnect();
     }, totalLength * 1000);
 }
-
-
-// compressor.connect(ctx.destination);
-
-let distortionNode = new audioDistortionNode(ctx);
-let distortion = distortionNode.getDistortionNode(100);
 
 function scheduleAudioBeat(beat, triggerTime) {
 
@@ -172,8 +169,20 @@ function scheduleAudioBeat(beat, triggerTime) {
 var schedule = new simpleTracker(ctx, scheduleAudioBeat);
 
 function setupBaseEvents() {
+
+    // var initializedCtx;
     document.getElementById('play').addEventListener('click', function (e) {
+
+        ctx.resume().then(() => {
+            console.log('Playback resumed successfully');
+        });
+
+        let storage = new tracksLocalStorage();
+        let track = storage.getTrack();
+
+        schedule.measureLength = track.settings.measureLength;
         schedule.stop();
+        
         schedule.runSchedule(getSetAudioOptions.options.bpm);
     });
 
@@ -267,6 +276,7 @@ function tracksLocalStorage() {
 
         let beat = schedule.getTrackerValues();
         let song = { "beat": beat, "settings": formData };
+        
         return song;
     }
 
@@ -285,7 +295,7 @@ function tracksLocalStorage() {
             this.setLocalStorage('update');
 
             $("#beat-list").val(filename);
-            // alert('Track saved');
+            alert('Track saved');
         });
 
         // saveAsJson
@@ -332,12 +342,17 @@ function tracksLocalStorage() {
         });
 
         document.getElementById('delete').addEventListener('click', (e) => {
+
+            e.preventDefault();
+
             let elem = document.getElementById('beat-list');
             let toDelete = elem.options[elem.selectedIndex].text;
 
             localStorage.removeItem(toDelete);
             document.getElementById('filename').value = '';
             this.setLocalStorage('update');
+
+            alert('Track has been deleted')
 
         });
     };
