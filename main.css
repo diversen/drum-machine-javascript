@@ -56,5 +56,14 @@ a {
 
 .tracker-current {
     background: blueviolet;
+}
 
+#app-message {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    background-color: peru;
+    margin: 10px;
+    padding: 10px;
+    display: none;
 }

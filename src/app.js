@@ -1,4 +1,3 @@
-// require("babel-polyfill"); 
 const loadSampleSet = require('load-sample-set');
 const selectElement = require('select-element');
 const getSetFormValues = require('get-set-form-values');
@@ -15,10 +14,6 @@ const defaultTrack = require('./default-track');
 var buffers;
 var currentSampleData;
 var storage;
-
-function debug (v) {
-    console.log(v)
-} 
 
 function initializeSampleSet(ctx, dataUrl, track) {
 
@@ -49,7 +44,6 @@ window.onload = function () {
     let formValues = new getSetFormValues();
     let form = document.getElementById("trackerControls");
 
-    debug (defaultTrack.settings)
     formValues.set(form, defaultTrack.settings);
     getSetAudioOptions.setTrackerControls(defaultTrack.settings);
 
@@ -269,6 +263,16 @@ function tracksLocalStorage() {
         return song;
     }
 
+    this.alert = function (message) {
+        let appMessage = document.getElementById('app-message');
+
+        appMessage.innerHTML = message
+        appMessage.style.display = 'block'
+        setTimeout(function () {
+            appMessage.style.display = 'none'
+        }, 2000)
+    }
+
     this.setupStorage = function () {
 
         this.setLocalStorage();
@@ -284,7 +288,9 @@ function tracksLocalStorage() {
             this.setLocalStorage('update');
 
             $("#beat-list").val(filename);
-            alert('Track saved');
+
+            this.alert(`The track has been saved to local storage as <strong>${filename}</strong>`)
+
         });
 
         // saveAsJson
@@ -341,7 +347,7 @@ function tracksLocalStorage() {
             document.getElementById('filename').value = '';
             this.setLocalStorage('update');
 
-            alert('Track has been deleted')
+            this.alert(`Track has been deleted`)
 
         });
     };
