@@ -33,10 +33,8 @@
 
             <br />
 
-            <input class="base" name="measureLength" id="measureLength" style="width: 60px;" value="16">
-            Measure length<br>
-            <input class="base" name="bpm" id="bpm" type="range" max="1000" min="20" step="1" value="460">
-            BPM
+            <input class="base" name="measureLength" id="measureLength" style="width: 60px;" value="16">Measure length<br>
+            <input class="base" name="bpm" id="bpm" type="range" max="1000" min="20" step="1" value="460">BPM
             <br>
             
             <hr />
@@ -45,16 +43,19 @@
             
             <hr />
 
-            <input class="base" name="gainEnabled" type="checkbox" id="gainEnabled" value="gain"> Enabled gain<br />
-            <input class="base" name="initGain" id="initGain" type="range" max="1" min="0" step="0.1" value="0.5"> 
-            Init gain
-            <br>
-            <input class="base" name="maxGain" id="maxGain" type="range" max="1" min="0" step="0.1" value="0.9"> Max
-            gain
-            <br>
-            <input class="base" name="attackTime" id="attackTime" type="range" max="1" min="0" step="0.01" value="0.08">                Attack time<br>
-            <input class="base" name="sustainTime" id="sustainTime" type="range" max="2" min="0" step="0.1" value="0.1">                Sustain time<br>
-            <input class="base" name="releaseTime" id="releaseTime" type="range" max="5" min="0" step="0.1" value="2">                Release time<br />
+            <input class="base" name="gainEnabled" type="checkbox" id="gainEnabled" value="gain">Enabled gain<br />
+
+            <input class="base" name="attackAmp" id="attackAmp" type="range" max="1" min="0" step="0.1" value="0.5">AttackAmp<br>
+            <input class="base" name="sustainAmp" id="sustainAmp" type="range" max="1" min="0" step="0.1" value="0.9"> SustainAmp<br>
+            <input class="base" name="decayAmp" id="decayAmp" type="range" max="1" min="0" step="0.1" value="0.9"> DecayAmp<br>
+            <input class="base" name="releaseAmp" id="releaseAmp" type="range" max="1" min="0" step="0.1" value="0.9"> ReleaseAmp<br>
+            <input class="base" name="attackTime" id="attackTime" type="range" max="1" min="0" step="0.01" value="0.08">Attacktime<br>
+            <input class="base" name="decayTime" id="decayTime" type="range" max="1" min="0" step="0.01" value="0.08">DecayTime<br>
+            <input class="base" name="sustainTime" id="sustainTime" type="range" max="2" min="0" step="0.1" value="0.1">Sustaintime<br>
+            <input class="base" name="releaseTime" id="releaseTime" type="range" max="5" min="0" step="0.1" value="2">Releasetime<br />
+
+            <input class="base" name="adsrInterval" id="adsrInterval" style="width: 60px;" value="0.1">AdsrInterval<br>
+            
             <hr />
 
             <input class="base" name="delayEnabled" type="checkbox" id="delayEnabled" value="delay"> Enabled delay

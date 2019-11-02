@@ -4,20 +4,21 @@ const selectElement = require('select-element');
 const getSetFormValues = require('get-set-form-values');
 const adsrGainNode = require('adsr-gain-node');
 const simpleTracker = require('./simple-tracker');
-const audioDistortionNode = require('./audio-distortion-node');
-const sampleLoader = require('tiny-sample-loader');
 const FileSaver = require('file-saver');
 
 const getSetControls = require('./get-set-controls');
 const getSetAudioOptions = new getSetControls();
 
 const ctx = new AudioContext();
-const defaultTrack = require('./track-3');
+const defaultTrack = require('./default-track');
 
 var buffers;
 var currentSampleData;
 var storage;
-var trackerDebug;
+
+function debug (v) {
+    console.log(v)
+} 
 
 function initializeSampleSet(ctx, dataUrl, track) {
 
@@ -32,11 +33,8 @@ function initializeSampleSet(ctx, dataUrl, track) {
         }
 
         if (!track.settings.measureLength) {
-           //  console.log('no measure length')
             track.settings.measureLength = 16;
         }
-
-        console.log(track.settings.measureLength)
 
         currentSampleData = sampleData;
         setupTrackerHtml(sampleData, track.settings.measureLength);
@@ -51,6 +49,7 @@ window.onload = function () {
     let formValues = new getSetFormValues();
     let form = document.getElementById("trackerControls");
 
+    debug (defaultTrack.settings)
     formValues.set(form, defaultTrack.settings);
     getSetAudioOptions.setTrackerControls(defaultTrack.settings);
 
@@ -83,6 +82,7 @@ function scheduleAudioBeat(beat, triggerTime) {
     let instrument = buffers[instrumentName].get();
     let options = getSetAudioOptions.getTrackerControls();
 
+
     function play(source) {
 
         source.detune.value = options.detune;
@@ -90,29 +90,18 @@ function scheduleAudioBeat(beat, triggerTime) {
         // Gain
         let node = routeGain(source)
         node = routeDelay(node);
-        node = routeCompressor(node);
+        // node = routeCompressor(node);
         node.connect(ctx.destination);
         source.start(triggerTime);
 
     }
 
-    function routeCompressor (node) {
-        // Not used yet
-        return node;
-        var compressor = ctx.createDynamicsCompressor();
-        compressor.threshold.value = -100; // -100 - 0
-        compressor.knee.value = 10; // 1 - 40
-        compressor.ratio.value = 12; // 1 - 20
-        compressor.attack.value = 1; // 0 - 1
-        compressor.release.value = 0; // 0 - 1
-
-        node.connect(compressor);
-        return compressor;
-    }
 
     function routeGain (source) {
         let gain = new adsrGainNode(ctx);
+        gain.mode = 'linearRampToValueAtTime';
         let options = getSetAudioOptions.getTrackerControls();
+
         let gainNode; 
 
         // Not enabled - default gain

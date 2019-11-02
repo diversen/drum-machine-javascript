@@ -1,2 +1,2 @@
 #!/bin/bash
-watchify src/main.js -t --debug -o 'bundle.js'
+watchify src/app.js -t --debug -o 'bundle.js'
