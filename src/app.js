@@ -125,6 +125,7 @@ function scheduleAudioBeat(beat, triggerTime) {
 
         // create adsr gain node
         let gain = new adsrGainNode(ctx);
+        gain.mode = 'linearRampToValueAtTime';
         gain.setOptions(options);
         let feedbackGain = gain.getGainNode(triggerTime);
 
